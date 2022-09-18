@@ -1,5 +1,5 @@
 import React from 'react';
-
+import RenderStatistics from './RenderStatistics';
 class FeedbackWidget extends React.Component {
   state = {
     good: 0,
@@ -26,6 +26,13 @@ class FeedbackWidget extends React.Component {
   };
 
   render() {
+    const { good, neutral, bad } = this.state;
+    const countTotalFeedback = good + neutral + bad;
+
+    const countPositiveFeedbackPercentage = Math.round(
+      (good * 100) / (neutral + bad + good)
+    );
+
     return (
       <div>
         <div>
@@ -43,12 +50,15 @@ class FeedbackWidget extends React.Component {
         </div>
         <div>
           <h2>Statistics</h2>
-
-          <p>Good: {this.state.good}</p>
-          <p>Neutral: {this.state.neutral}</p>
-          <p>Bad: {this.state.bad}</p>
-          <p>Total:</p>
-          <p>Positive feedback:</p>
+          {countTotalFeedback === 0 ? (
+            'There is no feedback'
+          ) : (
+            <RenderStatistics
+              state={this.state}
+              total={countTotalFeedback}
+              percentage={countPositiveFeedbackPercentage}
+            />
+          )}
         </div>
       </div>
     );
