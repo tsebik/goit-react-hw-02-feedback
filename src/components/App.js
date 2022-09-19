@@ -1,68 +1,74 @@
-import React from 'react';
-import Statistics from 'components/FeedbackWidget/Statistics';
-import FeedbackOptions from 'components/FeedbackWidget/Button';
-import Section from 'components/FeedbackWidget/Section';
+import { Component } from 'react';
+import Statistics from 'components/FeedbackWidget/Statistics/Statistics';
+// import FeedbackOptions from 'components/FeedbackWidget/Button';
+import Section from 'components/FeedbackWidget/Section/Section';
 
-class App extends React.Component {
+class App extends Component {
   state = {
     good: 0,
     neutral: 0,
     bad: 0,
   };
 
-  handleGood = () => {
-    this.setState(prevState => ({
-      good: prevState.good + 1,
-    }));
+  handleStatistics = property => {
+    this.setState(prevState => {
+      const value = prevState[property];
+      return {
+        [property]: value + 1,
+      };
+    });
   };
 
-  handleNeutral = () => {
-    this.setState(prevState => ({
-      neutral: prevState.neutral + 1,
-    }));
-  };
+  countTotalFeedback() {
+    const { good, neutral, bad } = this.state;
+    return good + neutral + bad;
+  }
 
-  handleBad = () => {
-    this.setState(prevState => ({
-      bad: prevState.bad + 1,
-    }));
-  };
+  countPositiveFeedbackPercentage() {
+    const total = this.countTotalFeedback();
+
+    if (!total) {
+      return 0;
+    }
+
+    const value = this.state.good;
+    const result = (value / total) * 100;
+    return Math.round(result);
+  }
 
   render() {
     const { good, neutral, bad } = this.state;
-    const countTotalFeedback = good + neutral + bad;
-
-    const countPositiveFeedbackPercentage = Math.round(
-      (good * 100) / (neutral + bad + good)
-    );
+    const total = this.countTotalFeedback();
+    const positivePercentage = this.countPositiveFeedbackPercentage();
 
     return (
       <div>
-        <Section title="Please leave feedback" />
+        <Section title="Please leave feedback">
+          <div>
+            <button type="button" onClick={() => this.handleStatistics('good')}>
+              Good
+            </button>
+            <button
+              type="button"
+              onClick={() => this.handleStatistics('neutral')}
+            >
+              Neutral
+            </button>
+            <button type="button" onClick={() => this.handleStatistics('bad')}>
+              Bad
+            </button>
+          </div>
+        </Section>
 
-        <FeedbackOptions
-          options={this.state}
-          onLeaveFeedbackGood={this.handleGood}
-          onLeaveFeedbackNeutral={this.handleNeutral}
-          onLeaveFeedbackBad={this.handleBad}
-        />
-
-        <div>
-          <h2>Statistics</h2>
-
-          {countTotalFeedback === 0 ? (
-            'There is no feedback'
-          ) : (
-            <Statistics
-              state={this.state}
-              good={good}
-              neutral={neutral}
-              bad={bad}
-              total={countTotalFeedback}
-              positivePercentage={countPositiveFeedbackPercentage}
-            />
-          )}
-        </div>
+        <Section title="Statistics">
+          <Statistics
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={total}
+            positivePercentage={positivePercentage}
+          />
+        </Section>
       </div>
     );
   }
