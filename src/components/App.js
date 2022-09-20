@@ -1,7 +1,8 @@
 import { Component } from 'react';
 import Statistics from 'components/FeedbackWidget/Statistics/Statistics';
-// import FeedbackOptions from 'components/FeedbackWidget/Button';
+import FeedbackOptions from 'components/FeedbackWidget/Button/Button';
 import Section from 'components/FeedbackWidget/Section/Section';
+import Notification from 'components/FeedbackWidget/NotificationM/Notification';
 
 class App extends Component {
   state = {
@@ -10,11 +11,11 @@ class App extends Component {
     bad: 0,
   };
 
-  handleStatistics = property => {
+  handleStatistics = propertyName => {
     this.setState(prevState => {
-      const value = prevState[property];
+      const value = prevState[propertyName];
       return {
-        [property]: value + 1,
+        [propertyName]: value + 1,
       };
     });
   };
@@ -44,30 +45,24 @@ class App extends Component {
     return (
       <div>
         <Section title="Please leave feedback">
-          <div>
-            <button type="button" onClick={() => this.handleStatistics('good')}>
-              Good
-            </button>
-            <button
-              type="button"
-              onClick={() => this.handleStatistics('neutral')}
-            >
-              Neutral
-            </button>
-            <button type="button" onClick={() => this.handleStatistics('bad')}>
-              Bad
-            </button>
-          </div>
+          <FeedbackOptions
+            options={this.state}
+            onLeaveFeedback={this.handleStatistics}
+          />
         </Section>
 
         <Section title="Statistics">
-          <Statistics
-            good={good}
-            neutral={neutral}
-            bad={bad}
-            total={total}
-            positivePercentage={positivePercentage}
-          />
+          {this.countTotalFeedback() === 0 ? (
+            <Notification message="There is no feedback" />
+          ) : (
+            <Statistics
+              good={good}
+              neutral={neutral}
+              bad={bad}
+              total={total}
+              positivePercentage={positivePercentage}
+            />
+          )}
         </Section>
       </div>
     );

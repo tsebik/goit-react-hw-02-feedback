@@ -1,0 +1,12 @@
+.statistics {
+	display: grid;
+	grid-template-rows: repeat(5, 1fr);
+}
+
+.statisticsList {
+	padding: 15px;
+}
+
+.statisticsItem {
+	margin-bottom: 5px;
+}
